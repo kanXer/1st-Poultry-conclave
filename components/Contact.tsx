@@ -393,7 +393,7 @@ export default function Contact() {
             <ScrollReveal>
               <div className="relative rounded-3xl h-48 border border-slate-200/80 dark:border-slate-800 shadow-xl overflow-hidden">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113963.35917819124!2d83.23025733232495!3d26.796823625280354!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399145e5c7df2057%3A0x58420cb04cd9d7ca!2sGorakhpur%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1784874699996!5m2!1sen!2sin"
+                  src="https://www.google.com/maps?q=26.7324268,83.3905569&z=17&output=embed"
                   className="absolute inset-0 w-full h-full"
                   style={{ border: 0 }}
                   allowFullScreen
