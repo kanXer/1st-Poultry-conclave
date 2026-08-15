@@ -297,7 +297,7 @@ export default function Contact() {
                 <div className="grid grid-cols-1 pt-1">
                   <a
                     href="tel:+919336212329"
-                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold text-xs px-4 py-3 rounded-2xl shadow-md transition-all active:scale-[0.98] whitespace-nowrap"
+                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold text-xs px-4 py-3 rounded-2xl shadow-md transition-all active:scale-[0.98]"
                   >
                     <Phone className="w-4 h-4" />
                     Call +91 9336212329

@@ -156,19 +156,12 @@ export default function Hero() {
                 ))}
               </div>
             </ScrollReveal>
-
-            <ScrollReveal>
-              <div className="mt-4 inline-flex items-center gap-2 bg-accent-50 text-accent-800 text-xs font-semibold px-4 py-2 rounded-full border border-accent-200 dark:bg-accent-900/40 dark:text-accent-200 dark:border-accent-800">
-                <TrendingUp className="w-3.5 h-3.5" />
-                Gorakhpur: The Rising Poultry Hub of Eastern India
-              </div>
-            </ScrollReveal>
           </div>
 
           {/* Event Card */}
           <div className="flex justify-center items-start relative pt-4 md:pt-4">
             <ScrollReveal>
-              <div className="relative w-full max-w-sm">
+              <div className="relative w-full max-w-sm overflow-hidden">
                 <div className="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-brand-200/20 to-accent-200/20 rounded-full blur-2xl dark:from-brand-900/20 dark:to-accent-900/20" />
                 <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-navy-800 to-navy-700 dark:from-navy-900 dark:to-navy-800 shadow-2xl border-4 border-white/80 dark:border-navy-700 dark:shadow-2xl dark:shadow-black/20 p-8">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-500 via-accent-500 to-brand-500" />
@@ -219,7 +212,7 @@ export default function Hero() {
                     </Link>
                     <a
                       href="tel:+919336212329"
-                      className="flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-3 rounded-xl transition-all whitespace-normal sm:whitespace-nowrap"
+                      className="flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-3 rounded-xl transition-all"
                     >
                       <Phone className="w-3.5 h-3.5 shrink-0" /> +91 9336212329
                     </a>
