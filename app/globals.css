@@ -1,0 +1,184 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --breakpoint-lgg: 1200px;
+
+  --color-brand-50: #fdf9ef;
+  --color-brand-100: #f9efd7;
+  --color-brand-200: #f0dcab;
+  --color-brand-300: #e5c377;
+  --color-brand-400: #d9a94f;
+  --color-brand-500: #c98a2f;
+  --color-brand-600: #b06f26;
+  --color-brand-700: #8e5521;
+  --color-brand-800: #73451f;
+  --color-brand-900: #5e3a1d;
+
+  --color-accent-50: #fff5ee;
+  --color-accent-100: #ffe7d4;
+  --color-accent-200: #ffcca6;
+  --color-accent-300: #ffa76c;
+  --color-accent-400: #ff7e38;
+  --color-accent-500: #f25c0d;
+  --color-accent-600: #d94d05;
+  --color-accent-700: #b43c04;
+  --color-accent-800: #91320a;
+  --color-accent-900: #772b0c;
+
+  --color-navy-50: #eef4f9;
+  --color-navy-100: #d7e5f0;
+  --color-navy-200: #aecbe1;
+  --color-navy-300: #7ca9ca;
+  --color-navy-400: #4f84ac;
+  --color-navy-500: #356890;
+  --color-navy-600: #265178;
+  --color-navy-700: #1a3d5f;
+  --color-navy-800: #10294a;
+  --color-navy-900: #0a1c33;
+
+  --font-sans: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-heading: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --animate-fade-in: fadeIn 0.6s ease-out forwards;
+  --animate-slide-up: slideUp 0.6s ease-out forwards;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes slideUp {
+    0% { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  * {
+    -webkit-tap-highlight-color: transparent;
+    min-width: 0;
+  }
+  img, video, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
+  }
+  b, strong {
+    font-weight: 700 !important;
+  }
+  a, button, [role="button"] {
+    cursor: pointer;
+  }
+  /* Prevent iOS auto-zoom when focusing inputs */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-accent-600;
+  }
+}
+
+.font-heading {
+  font-family: var(--font-heading), system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: var(--color-brand-200);
+  color: var(--color-navy-900);
+}
+.dark ::selection {
+  background: var(--color-brand-700);
+  color: var(--color-white);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-brand-400), var(--color-accent-500));
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--color-brand-500), var(--color-accent-600));
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.animate-blink {
+  animation: blink 0.7s step-end infinite;
+}
+
+@keyframes shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Fix for mobile bottom bar overlap on footer */
+@media (max-width: 767px) {
+  footer .pb-20 {
+    padding-bottom: 6rem !important;
+  }
+}
+
+/* Fix mobile vertical (Y-axis) overflow: 100vh includes the browser
+   URL bar height on Firefox/Chrome Android, causing extra blank scroll.
+   Use dynamic viewport units (dvh) where supported. */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+@supports (min-height: 100dvh) {
+  .min-h-screen { min-height: 100dvh; }
+  .h-screen { height: 100dvh; }
+  .min-h-\[80vh\] { min-height: 80dvh; }
+}
