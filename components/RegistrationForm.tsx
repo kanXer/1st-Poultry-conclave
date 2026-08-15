@@ -141,7 +141,7 @@ export default function RegistrationForm() {
                 Attendee &amp; Exhibitor Registration
               </span>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
-                Register for the <span className="text-gradient">Conclave</span>
+                Register for the Poultry <span className="text-gradient">Conclave</span>
               </h1>
               <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto lg:mx-0 text-base sm:text-lg mb-6">
                 Join the 1st Poultry Conclave Gorakhpur (Edition 2026) — Innovate, Collaborate, Grow.
