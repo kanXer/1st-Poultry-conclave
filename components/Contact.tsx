@@ -393,7 +393,7 @@ export default function Contact() {
             <ScrollReveal>
               <div className="relative rounded-3xl h-48 border border-slate-200/80 dark:border-slate-800 shadow-xl overflow-hidden">
                 <iframe
-                  src="https://www.google.com/maps?q=26.732432,83.387982&z=17&output=embed"
+                  src="https://www.google.com/maps?q=Yogi+Baba+Gambhirnath+Prekshagrih&z=17&output=embed"
                   className="absolute inset-0 w-full h-full"
                   style={{ border: 0 }}
                   allowFullScreen
