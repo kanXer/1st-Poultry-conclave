@@ -228,9 +228,9 @@ export default function Hero() {
             <div className="inline-flex items-center gap-2 bg-white/80 dark:bg-navy-800/80 backdrop-blur-sm rounded-full pl-3 pr-4 py-2 shadow-md border border-brand-200/60 dark:border-navy-700">
               <Building2 className="w-4 h-4 text-brand-600 dark:text-brand-400 shrink-0" />
               <span className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 leading-tight">
-                Organizer:{" "}
+                Organised by:{" "}
                 <span className="font-bold text-navy-800 dark:text-white">
-                  Department of Animal Husbandry &amp; Dairying, Uttar Pradesh Government
+                  Department of Animal Husbandry, Gorakhpur Division, Gorakhpur
                 </span>
               </span>
             </div>
