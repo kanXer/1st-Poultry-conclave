@@ -172,10 +172,17 @@ html {
 
 /* Fix mobile vertical (Y-axis) overflow: 100vh includes the browser
    URL bar height on Firefox/Chrome Android, causing extra blank scroll.
-   Use dynamic viewport units (dvh) where supported. */
+   Use dynamic viewport units (dvh) where supported.
+   overflow-x uses `clip` (not `hidden`) so the root never becomes a
+   scroll container — otherwise position:sticky sidebars stop sticking. */
 html, body {
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100%;
+}
+@supports not (overflow: clip) {
+  html, body {
+    overflow-x: hidden;
+  }
 }
 @supports (min-height: 100dvh) {
   .min-h-screen { min-height: 100dvh; }
