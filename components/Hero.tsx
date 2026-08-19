@@ -175,7 +175,7 @@ export default function Hero() {
                     <div className="mt-4 space-y-2">
                       <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 border border-white/10">
                         <CalendarCheck className="w-3.5 h-3.5 text-brand-400" />
-                        <span className="text-xs font-semibold text-white">Sunday, 23 August 2026</span>
+                        <span className="text-xs font-semibold text-white">Sunday, 23 August 2026 • 9:00 AM to 4:00 PM</span>
                       </div>
                       <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 border border-white/10">
                         <MapPin className="w-3.5 h-3.5 text-accent-400" />
