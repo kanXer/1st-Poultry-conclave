@@ -58,10 +58,10 @@ export default function Header() {
                 1st Poultry <span className="text-gradient">Conclave</span>
               </span>
               <span className="block sm:hidden text-[9px] text-navy-500 dark:text-navy-300 font-medium leading-tight truncate">
-                Sun, 23 Aug 2026 • Taramandal, Gorakhpur
+                Sun, 23 Aug 2026 • 9:00 AM to 4:00 PM
               </span>
               <span className="hidden sm:block text-[10px] md:text-[11px] text-navy-500 dark:text-navy-300 font-medium leading-tight truncate">
-                Sunday, 23 Aug 2026 • Baba Gambhirnath Auditorium, Taramandal • Edition 2026
+                Sunday, 23 Aug 2026 • 9:00 AM to 4:00 PM • Baba Gambhirnath Auditorium, Taramandal • Edition 2026
               </span>
             </div>
           </Link>
