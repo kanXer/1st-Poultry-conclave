@@ -119,7 +119,7 @@ export default function Hero() {
                     <CalendarCheck className="w-3.5 h-3.5 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-navy-800 dark:text-white">Sunday, 23 August 2026</p>
+                    <p className="text-sm font-bold text-navy-800 dark:text-white">Sunday, 23 August 2026 • 9:00 AM to 4:00 PM</p>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">Register online — attendee, exhibitor or sponsor.</p>
                   </div>
                 </div>
