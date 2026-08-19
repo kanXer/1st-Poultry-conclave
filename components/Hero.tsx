@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link"
-import { CalendarCheck, MapPin, ShieldCheck, Sunrise, ChevronRight, Phone, MessageSquare, Users, TrendingUp, Microscope, Factory, PiggyBank, Handshake, Building2, Leaf, Egg } from "lucide-react"
+import { CalendarCheck, MapPin, ShieldCheck, Sunrise, ChevronRight, Phone, MessageSquare, Users, TrendingUp, Microscope, Leaf, Egg, Building2, Clock } from "lucide-react"
 import ScrollReveal from "./ScrollReveal"
 import TextReveal from "./TextReveal"
 
@@ -114,31 +114,34 @@ export default function Hero() {
 
             <ScrollReveal>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-6">
-                <div className="flex items-start gap-2 bg-brand-50/70 dark:bg-brand-900/20 rounded-xl px-3.5 py-2.5 border border-brand-200/50 dark:border-brand-800/30">
+                <div className="flex items-start gap-2.5 bg-brand-50/70 dark:bg-brand-900/20 rounded-xl px-3.5 py-2.5 border border-brand-200/50 dark:border-brand-800/30">
                   <div className="w-6 h-6 bg-brand-600 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                     <CalendarCheck className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-navy-800 dark:text-white">Sunday, 23 August 2026 • 9:00 AM to 4:00 PM</p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">Register online — attendee, exhibitor or sponsor.</p>
+                  <div className="flex flex-col">
+                    <p className="text-xs sm:text-sm font-bold text-navy-800 dark:text-white leading-tight">Sunday, 23 Aug 2026</p>
+                    <p className="text-xs font-semibold text-brand-700 dark:text-brand-300 mt-0.5">9:00 AM – 4:00 PM</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug mt-1">Register online — attendee, exhibitor or sponsor.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-2 bg-accent-50/70 dark:bg-accent-900/20 rounded-xl px-3.5 py-2.5 border border-accent-200/50 dark:border-accent-800/30">
+
+                <div className="flex items-start gap-2.5 bg-accent-50/70 dark:bg-accent-900/20 rounded-xl px-3.5 py-2.5 border border-accent-200/50 dark:border-accent-800/30">
                   <div className="w-6 h-6 bg-accent-600 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                     <MapPin className="w-3.5 h-3.5 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-navy-800 dark:text-white">Baba Gambhirnath Auditorium</p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">Taramandal • Gorakhpur, India • 23 Aug 2026</p>
+                    <p className="text-xs sm:text-sm font-bold text-navy-800 dark:text-white leading-tight">Baba Gambhirnath Auditorium</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">Taramandal • Gorakhpur, India</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-2 bg-emerald-50/70 dark:bg-emerald-900/20 rounded-xl px-3.5 py-2.5 border border-emerald-200/50 dark:border-emerald-800/30">
+
+                <div className="flex items-start gap-2.5 bg-emerald-50/70 dark:bg-emerald-900/20 rounded-xl px-3.5 py-2.5 border border-emerald-200/50 dark:border-emerald-800/30">
                   <div className="w-6 h-6 bg-emerald-600 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                     <Users className="w-3.5 h-3.5 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-navy-800 dark:text-white">Farmers to Leaders</p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">Farmers, enterprises, vets, investors &amp; delegates.</p>
+                    <p className="text-xs sm:text-sm font-bold text-navy-800 dark:text-white leading-tight">Farmers to Leaders</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">Farmers, enterprises, vets, investors &amp; delegates.</p>
                   </div>
                 </div>
               </div>
@@ -172,14 +175,18 @@ export default function Hero() {
                     <p className="text-xs font-semibold uppercase tracking-widest text-brand-300 mb-1">1st Poultry Conclave</p>
                     <h3 className="text-2xl font-extrabold text-white leading-tight">Gorakhpur 2026</h3>
                     <p className="text-brand-200 text-sm mt-1">Innovate • Collaborate • Grow</p>
+                    
                     <div className="mt-4 space-y-2">
-                      <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 border border-white/10">
-                        <CalendarCheck className="w-3.5 h-3.5 text-brand-400" />
-                        <span className="text-xs font-semibold text-white">Sunday, 23 August 2026 • 9:00 AM to 4:00 PM</span>
+                      <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3.5 py-1.5 border border-white/10 text-xs font-semibold text-white">
+                        <CalendarCheck className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+                        <span>Sun, 23 Aug 2026</span>
+                        <span className="text-white/40">•</span>
+                        <Clock className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+                        <span>9:00 AM – 4:00 PM</span>
                       </div>
                       <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 border border-white/10">
-                        <MapPin className="w-3.5 h-3.5 text-accent-400" />
-                        <span className="text-xs font-semibold text-white">Baba Gambhirnath Auditorium, Taramandal, Gorakhpur</span>
+                        <MapPin className="w-3.5 h-3.5 text-accent-400 shrink-0" />
+                        <span className="text-xs font-semibold text-white">Baba Gambhirnath Auditorium, Gorakhpur</span>
                       </div>
                     </div>
                   </div>
