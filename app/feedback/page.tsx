@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import SparkleEventBanner from "@/components/SparkleEventBanner"
 import { Star, Loader2, Send, MessageSquare, CheckCircle, Heart } from "lucide-react"
 
 const categories = [
@@ -88,6 +89,7 @@ export default function FeedbackPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-navy-900">
       <Header />
+      <SparkleEventBanner />
       <main className="max-w-3xl mx-auto px-4 py-12 sm:py-16">
         <div className="text-center mb-10">
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-accent-50 text-accent-700 dark:bg-accent-950/60 dark:text-accent-300 border border-accent-200/60 dark:border-accent-800/60 mb-3 shadow-xs">

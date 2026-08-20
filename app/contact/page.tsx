@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import SparkleEventBanner from "@/components/SparkleEventBanner"
 import Contact from "@/components/Contact"
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function ContactPage() {
   return (
     <>
       <Header />
+      <SparkleEventBanner />
       <main id="main-content" className="pt-16 md:pt-24">
         <Contact />
       </main>

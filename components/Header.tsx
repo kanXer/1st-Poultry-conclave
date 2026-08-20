@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation"
 import { Menu, X, CalendarCheck, CalendarDays, MapPin, Phone, User, ShieldCheck, Home, Info, Images, Mail, ChevronRight } from "lucide-react"
 import { useAuth } from "./AuthProvider"
 import ThemeToggle from "./ThemeToggle"
-import SparkleEventBanner from "./SparkleEventBanner"
 
 const navLinks = [
   { label: "Home", href: "/", icon: Home },
@@ -38,9 +37,8 @@ export default function Header() {
   }
 
   return (
-    <>
-      <header
-        className={`sticky top-0 left-0 w-full z-50 bg-white/85 dark:bg-navy-900/85 backdrop-blur-2xl border-b transition-all duration-300 ${
+    <header
+      className={`sticky top-0 left-0 w-full z-50 bg-white/85 dark:bg-navy-900/85 backdrop-blur-2xl border-b transition-all duration-300 ${
         scrolled
           ? "border-slate-200/80 dark:border-navy-700/80 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
           : "border-slate-200/50 dark:border-navy-800/50 shadow-[0_4px_30px_rgba(0,0,0,0.05)]"
@@ -174,16 +172,5 @@ export default function Header() {
         </div>
       )}
       </header>
-      {!pathname.startsWith("/admin") && (
-        <SparkleEventBanner
-          sticky={
-            pathname !== "/register" &&
-            !pathname.startsWith("/register/") &&
-            pathname !== "/feedback" &&
-            pathname !== "/contact"
-          }
-        />
-      )}
-    </>
   )
 }

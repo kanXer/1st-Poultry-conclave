@@ -1,5 +1,6 @@
 import TopBar from "@/components/TopBar"
 import Header from "@/components/Header"
+import SparkleEventBanner from "@/components/SparkleEventBanner"
 import Hero from "@/components/Hero"
 import Pillars from "@/components/Pillars"
 import FocusAreas from "@/components/FocusAreas"
@@ -14,6 +15,7 @@ export default function Home() {
     <>
       <TopBar />
       <Header />
+      <SparkleEventBanner sticky />
       <main id="main-content">
         <Hero />
         <Pillars />

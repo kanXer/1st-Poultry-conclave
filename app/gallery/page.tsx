@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import SparkleEventBanner from "@/components/SparkleEventBanner"
 import { X, ChevronLeft, ChevronRight, Loader2, Image as ImageIcon, Video, Play, Maximize2, ExternalLink } from "lucide-react"
 
 interface Item {
@@ -76,6 +77,7 @@ export default function GalleryPage() {
   return (
     <>
       <Header />
+      <SparkleEventBanner />
       <section className="min-h-screen bg-white dark:bg-navy-900">
         <div className="fixed inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05]"
           style={{ backgroundImage: "radial-gradient(circle at 25px 25px, #0ea5e9 1px, transparent 0)", backgroundSize: "50px 50px" }} />
