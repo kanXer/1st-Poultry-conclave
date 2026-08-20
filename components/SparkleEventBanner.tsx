@@ -19,7 +19,7 @@ const SPARKLES = [
   { top: "52%", left: "1%", size: 5, delay: "0.8s", duration: "2.4s" },
 ]
 
-export default function SparkleEventBanner() {
+export default function SparkleEventBanner({ sticky = true }: { sticky?: boolean }) {
   const mapsUrl =
     "https://www.google.com/maps/search/?api=1&query=" +
     encodeURIComponent("Baba Gambhirnath Auditorium, Taramandal, Gorakhpur, Uttar Pradesh, India")
@@ -27,7 +27,7 @@ export default function SparkleEventBanner() {
   return (
     <section
       aria-label="Event date, time and venue"
-      className="sticky z-40 top-[var(--header-height)] w-full overflow-hidden bg-navy-950"
+      className={`w-full overflow-hidden bg-navy-950 ${sticky ? "sticky z-40 top-[var(--header-height)]" : ""}`}
     >
       {/* Layered premium background */}
       <div className="absolute inset-0 bg-gradient-to-r from-navy-900 via-navy-800 to-navy-900" />

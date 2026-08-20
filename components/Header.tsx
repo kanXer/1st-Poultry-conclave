@@ -174,7 +174,16 @@ export default function Header() {
         </div>
       )}
       </header>
-      {!pathname.startsWith("/admin") && <SparkleEventBanner />}
+      {!pathname.startsWith("/admin") && (
+        <SparkleEventBanner
+          sticky={
+            pathname !== "/register" &&
+            !pathname.startsWith("/register/") &&
+            pathname !== "/feedback" &&
+            pathname !== "/contact"
+          }
+        />
+      )}
     </>
   )
 }
