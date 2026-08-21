@@ -65,7 +65,18 @@ function PrintCard({ reg }: { reg: Registration }) {
           }
           .no-print { display: none !important; }
           .wrapper { padding: 0 !important; gap: 0 !important; }
-          .card { box-shadow: none !important; border-radius: 0 !important; border: 1px dashed #94a3b8 !important; }
+          .card { box-shadow: none !important; border-radius: 0 !important; border: none !important; position: relative; }
+          /* Inset black frame so all four sides print inside the printer's
+             non-printable margin instead of being clipped at the page edge. */
+          .card::after {
+            content: "" !important;
+            position: absolute !important;
+            inset: 0 !important;
+            border: 1.5px solid #000000 !important;
+            pointer-events: none !important;
+            z-index: 5 !important;
+          }
+          .back-card { transform: rotate(180deg); transform-origin: center center; }
           .page-break { page-break-after: always; }
           /* Rotate the back side 180° so that after a duplex (short-edge)
              print + flip, the ID/content reads in the same direction as front. */
