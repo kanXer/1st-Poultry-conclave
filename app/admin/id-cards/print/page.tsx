@@ -67,6 +67,9 @@ function PrintCard({ reg }: { reg: Registration }) {
           .wrapper { padding: 0 !important; gap: 0 !important; }
           .card { box-shadow: none !important; border-radius: 0 !important; border: 1px dashed #94a3b8 !important; }
           .page-break { page-break-after: always; }
+          /* Rotate the back side 180° so that after a duplex (short-edge)
+             print + flip, the ID/content reads in the same direction as front. */
+          .back-card { transform: rotate(180deg); transform-origin: center center; }
         }
 
         /* Keep A6 landscape on screen too, and scale down on small phones */
@@ -384,7 +387,8 @@ function PrintCard({ reg }: { reg: Registration }) {
         <div className="print-tip">
           <strong>A6 Landscape printing:</strong> in the print dialog choose paper size{" "}
           <strong>A6</strong> (or <strong>148 × 105 mm Custom</strong>), margins <strong>None</strong>,
-          scale <strong>100%</strong>. If your printer still won&apos;t use A6, use{" "}
+          scale <strong>100%</strong>, and for double-sided use <strong>Flip on short edge</strong>{" "}
+          (so the back reads the same way as the front). If your printer still won&apos;t use A6, use{" "}
           <strong>Download A6 PDF</strong> and print that file at 100% size.
         </div>
         <div className="print-btn-row">
