@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { saveRegistration } from "@/lib/storage"
+import { saveRegistration, getRegistrationOpen } from "@/lib/storage"
 import { verifyCaptcha } from "@/lib/captcha"
 import { rateLimit } from "@/lib/rateLimit"
 import { sendTelegramNotification } from "@/lib/telegram"
@@ -8,6 +8,14 @@ import { generateIdCardPdf } from "@/lib/idCardPdf"
 
 export async function POST(request: NextRequest) {
   try {
+    // Hard stop: reject any submission while registration is closed
+    if (!(await getRegistrationOpen())) {
+      return NextResponse.json(
+        { error: "Registration is currently closed. Please check back later." },
+        { status: 403 }
+      )
+    }
+
     const body = await request.json()
     const { name, occupation, phone, email, captchaId, captchaAnswer } = body
 

@@ -23,7 +23,15 @@ export default function RegistrationForm() {
   const [error, setError] = useState("")
   const [regId, setRegId] = useState("")
   const [submittedName, setSubmittedName] = useState("")
+  const [regStatus, setRegStatus] = useState<"loading" | "open" | "closed">("loading")
   const successRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    fetch("/api/settings/registration")
+      .then((r) => r.json())
+      .then((d) => setRegStatus(d.open === false ? "closed" : "open"))
+      .catch(() => setRegStatus("open"))
+  }, [])
 
   useEffect(() => {
     if (submitted) {
@@ -122,6 +130,56 @@ export default function RegistrationForm() {
               >
                 Register Another Person
               </button>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+    )
+  }
+
+  if (regStatus === "loading") {
+    return (
+      <section className="py-12 md:py-20 bg-slate-50/50 dark:bg-slate-950 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-[40vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-brand-600" />
+        </div>
+      </section>
+    )
+  }
+
+  if (regStatus === "closed") {
+    return (
+      <section className="py-12 md:py-20 bg-slate-50/50 dark:bg-slate-950 transition-colors duration-300">
+        <div className="max-w-lg mx-auto px-4">
+          <ScrollReveal>
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-10 text-center border border-slate-200/80 dark:border-slate-800 shadow-xl shadow-slate-200/40 dark:shadow-none animate-fade-in">
+              <div className="w-16 h-16 bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-rose-200 dark:border-rose-800">
+                <AlertCircle className="w-9 h-9" />
+              </div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50 mb-4">
+                <span className="w-2 h-2 rounded-full bg-rose-500" />
+                Registration Stopped
+              </span>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Registration is Currently Closed</h2>
+              <p className="text-slate-600 dark:text-slate-300 text-sm max-w-md mx-auto mb-6">
+                Thank you for your interest in the <strong>1st Poultry Conclave Gorakhpur (Edition 2026)</strong>.
+                Registration has been stopped for now. Please stay connected — we will announce if it reopens.
+              </p>
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="inline-flex items-center gap-2 bg-brand-50 dark:bg-brand-900/20 rounded-xl px-3.5 py-2.5 border border-brand-200/50 dark:border-brand-800/30">
+                  <CalendarCheck className="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0" />
+                  <div className="text-left">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">Sunday, 23 August 2026</p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">Baba Gambhirnath Auditorium, Taramandal, Gorakhpur</p>
+                  </div>
+                </div>
+              </div>
+              <a
+                href="/"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-700 hover:to-accent-700 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all"
+              >
+                Back to Home
+              </a>
             </div>
           </ScrollReveal>
         </div>

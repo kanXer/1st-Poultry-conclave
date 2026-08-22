@@ -4,7 +4,7 @@ import { useAuth } from "@/components/AuthProvider"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { LayoutGrid, Loader, Image as IconImage, Users, ArrowRight, CheckCircle, UserCheck, MessageSquare, CreditCard, Star, Sparkles, CalendarDays, TrendingUp } from "lucide-react"
+import { LayoutGrid, Loader, Loader2, Image as IconImage, Users, ArrowRight, CheckCircle, UserCheck, MessageSquare, CreditCard, Star, Sparkles, CalendarDays, TrendingUp, Power, PowerOff } from "lucide-react"
 
 interface Registration {
   _id: string
@@ -49,6 +49,8 @@ export default function AdminDashboard() {
   const [registrations, setRegistrations] = useState<Registration[]>([])
   const [enquiries, setEnquiries] = useState<Enquiry[]>([])
   const [feedback, setFeedback] = useState<Feedback[]>([])
+  const [regOpen, setRegOpen] = useState<boolean | null>(null)
+  const [regBusy, setRegBusy] = useState(false)
 
   useEffect(() => {
     if (!loading && (!user || !user.isAdmin)) router.push("/admin/login")
@@ -59,7 +61,27 @@ export default function AdminDashboard() {
     fetch("/api/registrations").then(r => r.json()).then(d => { if (d.registrations) setRegistrations(d.registrations) }).catch(() => {})
     fetch("/api/enquiries").then(r => r.json()).then(d => { if (d.enquiries) setEnquiries(d.enquiries) }).catch(() => {})
     fetch("/api/feedback").then(r => r.json()).then(d => { if (d.feedback) setFeedback(d.feedback) }).catch(() => {})
+    fetch("/api/settings/registration").then(r => r.json()).then(d => setRegOpen(d.open !== false)).catch(() => setRegOpen(true))
   }, [user])
+
+  const toggleRegistration = async () => {
+    if (regOpen === null) return
+    setRegBusy(true)
+    try {
+      const next = !regOpen
+      const res = await fetch("/api/settings/registration", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ open: next }),
+      })
+      const data = await res.json()
+      if (res.ok) setRegOpen(data.open !== false)
+    } catch {
+      // ignore
+    } finally {
+      setRegBusy(false)
+    }
+  }
 
   if (loading) return <div className="min-h-screen bg-slate-100 dark:bg-navy-950 flex items-center justify-center"><Loader className="w-8 h-8 animate-spin text-brand-600" /></div>
   if (!user || !user.isAdmin) return null
@@ -251,6 +273,44 @@ export default function AdminDashboard() {
               ))
             )}
           </div>
+        </div>
+
+        {/* Registration Control */}
+        <div className="bg-white dark:bg-navy-900 rounded-2xl border border-slate-200/70 dark:border-navy-800 shadow-sm p-5 mb-8 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-brand-500/20 ${regOpen === false ? "bg-gradient-to-br from-rose-500 to-red-600" : "bg-gradient-to-br from-emerald-500 to-teal-600"}`}>
+              {regOpen === false ? <PowerOff className="w-5 h-5 text-white" /> : <Power className="w-5 h-5 text-white" />}
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-navy-800 dark:text-white">Event Registration</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {regOpen === null
+                  ? "Loading status…"
+                  : regOpen
+                    ? "Open — visitors can register on the site."
+                    : "Stopped — the registration form shows a closed notice."}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={toggleRegistration}
+            disabled={regBusy || regOpen === null}
+            className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all shadow-md disabled:opacity-60 ${
+              regOpen === false
+                ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
+                : "bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white"
+            }`}
+          >
+            {regBusy ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : regOpen === false ? (
+              <Power className="w-4 h-4" />
+            ) : (
+              <PowerOff className="w-4 h-4" />
+            )}
+            {regOpen === false ? "Open Registration" : "Stop Registration"}
+          </button>
         </div>
 
         {/* Quick Actions */}

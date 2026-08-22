@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `ID card PDF emailed to ${reg.email} as ${idCardPdfFilename(reg.regId)} (A6 landscape).`,
+      message: `ID card PDF emailed to ${reg.email} as ${idCardPdfFilename(reg.regId, reg.name)} (A6 landscape).`,
     })
   } catch (e) {
     console.error("ID card email error:", e)

@@ -150,3 +150,37 @@ export async function getRegistrationByRegId(regId: string): Promise<Registratio
   const record = await db.collection<Registration>("registrations").findOne({ regId })
   return record ? { ...record, _id: record._id.toString() } as Registration : null
 }
+
+export const REGISTRATION_OPEN_KEY = "registrationOpen"
+
+/**
+ * Returns whether public event registration is currently open.
+ * Defaults to true (open) when no setting exists yet.
+ */
+export async function getRegistrationOpen(): Promise<boolean> {
+  try {
+    const db = await getDb()
+    const doc = await db
+      .collection<{ _id: string; value: boolean; updatedAt?: string }>("settings")
+      .findOne({ _id: REGISTRATION_OPEN_KEY })
+    if (!doc) return true
+    return doc.value !== false
+  } catch {
+    return true
+  }
+}
+
+/**
+ * Persists the public registration open/closed state.
+ */
+export async function setRegistrationOpen(open: boolean): Promise<boolean> {
+  const db = await getDb()
+  await db
+    .collection<{ _id: string; value: boolean; updatedAt?: string }>("settings")
+    .updateOne(
+      { _id: REGISTRATION_OPEN_KEY },
+      { $set: { value: !!open, updatedAt: new Date().toISOString() } },
+      { upsert: true }
+    )
+  return !!open
+}

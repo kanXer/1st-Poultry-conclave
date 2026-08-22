@@ -159,13 +159,13 @@ export async function sendEnquiryCompletedNotification(details: {
 
 // ─── 4. ID Card PDF (A6 landscape, attached as <regId> <name>.pdf) ───
 
-export function idCardPdfFilename(regId: string): string {
-  const safeId = String(regId || "ID")
-    .replace(/[\\/:*?"<>|\s]+/g, "")
+export function idCardPdfFilename(regId: string, name: string): string {
+  const safeName = String(name || "Attendee")
+    .replace(/[\\/:*?"<>|]+/g, " ")
+    .replace(/\s+/g, " ")
     .trim()
-  return `${safeId}.pdf`
+  return `${String(regId || "ID").replace(/[\\/:*?"<>|]+/g, "")} ${safeName}.pdf`
 }
-
 
 export async function sendIdCardEmail(details: {
   name: string
@@ -176,7 +176,7 @@ export async function sendIdCardEmail(details: {
 }) {
   if (!details.email || details.email === "—" || !process.env.SMTP_EMAIL || !process.env.SMTP_PASS) return false
 
-  const filename = idCardPdfFilename(details.regId)
+  const filename = idCardPdfFilename(details.regId, details.name)
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f8fafc;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0">
       <div style="background:linear-gradient(135deg,#0b1e36,#08162a);padding:24px 32px;text-align:center">

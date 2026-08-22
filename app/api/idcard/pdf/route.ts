@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
       { siteUrl }
     )
 
-    const filename = idCardPdfFilename(reg.regId)
+    const filename = idCardPdfFilename(reg.regId, reg.name)
 
     return new NextResponse(new Uint8Array(pdf), {
       status: 200,

@@ -15,7 +15,10 @@ export interface IdCardPdfOptions {
   logoBuffer?: Buffer
 }
 
-// A6 landscape = 148mm × 105mm
+// A6 landscape = 148mm × 105mm (same as the print page).
+// NOTE: we draw in POINTS, not mm — pdfkit's text measurement (heightOfString /
+// widthOfString) is always point-based, so using `unit: "mm"` inflates text
+// heights ~2.83x and makes doc.text() leak onto extra pages.
 const PT_PER_MM = 72 / 25.4
 const mm = (n: number) => n * PT_PER_MM
 
@@ -32,63 +35,6 @@ const GOLD_MID = "#d9a94f"
 const WHITE = "#ffffff"
 const SLATE_100 = "#f1f5f9"
 const DARK_TEXT = "#0a1c33"
-
-/**
- * Helper: Text ko multi-line or single-line bounded box me fit karne ke liye dynamic font size calculate karta hai.
- */
-function getFittedFontSize(
-  doc: PDFKit.PDFDocument,
-  text: string,
-  fontName: string,
-  startSize: number,
-  minSize: number,
-  maxWidth: number,
-  maxHeight: number,
-  options?: { lineGap?: number; characterSpacing?: number }
-): number {
-  let size = startSize
-  doc.font(fontName)
-  while (size > minSize) {
-    doc.fontSize(size)
-    const h = doc.heightOfString(text, {
-      width: maxWidth,
-      lineGap: options?.lineGap ?? 0,
-      characterSpacing: options?.characterSpacing ?? 0,
-    })
-    if (h <= maxHeight) {
-      return size
-    }
-    size -= 0.5
-  }
-  return minSize
-}
-
-/**
- * Helper: Single-line Footer Text ke liye font size aur letter spacing fit karta hai.
- */
-function getFooterFontConfig(
-  doc: PDFKit.PDFDocument,
-  text: string,
-  maxWidth: number
-): { fontSize: number; characterSpacing: number } {
-  doc.font("Inter-Bold")
-  let size = 11
-  let spacing = 3
-
-  while (size >= 6) {
-    doc.fontSize(size)
-    const w = doc.widthOfString(text, { characterSpacing: spacing })
-    if (w <= maxWidth) {
-      return { fontSize: size, characterSpacing: spacing }
-    }
-    if (spacing > 0.5) {
-      spacing -= 0.5
-    } else {
-      size -= 0.5
-    }
-  }
-  return { fontSize: 6, characterSpacing: 0 }
-}
 
 function qrUrl(data: string, size: number) {
   return `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
@@ -144,7 +90,7 @@ function drawFront(
     [1, GOLD],
   ])
   doc.rect(0, 0, W, mm(16)).fill(barGrad)
-  
+  // Two lanyard slots — matched to preview's `padding: 0 20mm; space-around`
   doc.save()
   doc.lineWidth(mm(0.4))
   doc.strokeColor("#cbd5e1")
@@ -153,14 +99,18 @@ function drawFront(
   doc.restore()
 
   // ─── Front content ───
-  const leftW = W * 0.38
+  const leftW = W * 0.38 // 56.24mm
   const rightX = leftW
 
+  // Left column spans full height below lanyard (16mm to H)
   const leftCenter = mm(16) + (H - mm(16)) / 2
+  // Right column spans from lanyard to footer (16mm to H-12mm)
   const rightCenter = mm(16) + (H - mm(16) - mm(12)) / 2
 
+  // Left: branding background
   doc.rect(0, mm(16), leftW, H - mm(16)).fill(WHITE)
 
+  // dashed vertical border between left & right
   doc.save()
   doc.dash(mm(3), { space: mm(2) })
   doc.lineWidth(mm(0.4))
@@ -168,7 +118,7 @@ function drawFront(
   doc.moveTo(rightX, mm(16)).lineTo(rightX, H).stroke()
   doc.restore()
 
-  // ─── Left: branding block ───
+  // ─── Left: branding block (vertically centered) ───
   const brandX = mm(6)
   const brandW = leftW - mm(12)
   doc.font("Inter-Bold").fontSize(8)
@@ -184,18 +134,18 @@ function drawFront(
   const logoW = mm(35)
   const logoX = (leftW - logoW) / 2
   const leftBlockH = logoW + mm(3) + titleH + mm(2) + dateH + mm(2) + venueH
-  let logoY = leftCenter - leftBlockH / 2
-  if (logoY < mm(17)) logoY = mm(17)
-
+  const logoY = leftCenter - leftBlockH / 2
   if (logo) {
     doc.image(logo, logoX, logoY, { width: logoW, height: logoW, fit: [mm(35), mm(35)] })
   }
   let y = logoY + logoW + mm(3)
 
+  // title
   doc.font("Inter-Bold").fontSize(8).fillColor(DARK_TEXT)
-  doc.text("1ST POULTRY\nCONCLAVE", brandX, y, { width: brandW, align: "center", lineGap: 2.4, height: titleH + mm(1), ellipsis: true })
+  doc.text("1ST POULTRY\nCONCLAVE", brandX, y, { width: brandW, align: "center", lineGap: 2.4 })
   y += titleH + mm(2)
 
+  // date pill (sized to the text, rounded, centered — like the preview)
   doc.font("Inter-Bold").fontSize(7).fillColor(NAVY_800)
   const dateW = doc.widthOfString("23 AUG 2026")
   const pillW = dateW + mm(6)
@@ -204,102 +154,62 @@ function drawFront(
   doc.opacity(0.2)
   doc.roundedRect(pillX, y - mm(1.2), pillW, mm(5), mm(1.5)).fill(GOLD)
   doc.restore()
-  doc.text("23 AUG 2026", brandX, y, { width: brandW, align: "center", height: dateH + mm(1), ellipsis: true })
+  doc.text("23 AUG 2026", brandX, y, { width: brandW, align: "center" })
   y += dateH + mm(2)
 
+  // venue
   doc.font("Inter-Bold").fontSize(6).fillColor(NAVY_400)
-  doc.text("Baba Gambhirnath Auditorium, Gorakhpur", brandX, y, { width: brandW, align: "center", lineGap: 2.4, height: venueH + mm(1), ellipsis: true })
+  doc.text("Baba Gambhirnath Auditorium, Gorakhpur", brandX, y, { width: brandW, align: "center", lineGap: 2.4 })
 
-  // ─── Right: attendee info (Dynamic Scaling + Bound Clamping) ───
+  // ─── Right: attendee info (vertically centered) ───
   const padX = mm(8)
-  const textW = W - rightX - padX * 2 - mm(30) - mm(4)
+  const textW = W - rightX - padX * 2 - mm(30) - mm(4) // right column minus QR width + gap
 
-  const nameText = reg.name.toUpperCase()
-  const roleText = reg.occupation.toUpperCase()
-  const cityText = "GORAKHPUR · INDIA"
+  // measure each text stack with its own font so the block can be centered
+  doc.font("Inter-Bold").fontSize(18)
+  const nameH = doc.heightOfString(reg.name.toUpperCase(), { width: textW, lineGap: 1.8 })
+  doc.font("Inter-Bold").fontSize(10)
+  const roleH = doc.heightOfString(reg.occupation.toUpperCase(), { width: textW, lineGap: 1 })
+  doc.font("Inter-Bold").fontSize(8)
+  const cityH = doc.heightOfString("GORAKHPUR · INDIA", { width: textW, lineGap: 1 })
 
-  // Dynamic font sizes calculate kar rahe hain taaki height exceed na ho
-  const nameFontSize = getFittedFontSize(doc, nameText, "Inter-Bold", 18, 9, textW, mm(18), { lineGap: 1.5 })
-  const roleFontSize = getFittedFontSize(doc, roleText, "Inter-Bold", 10, 7, textW, mm(10), { lineGap: 1 })
-  const cityFontSize = 8
+  const textStackH = nameH + mm(6) + roleH + mm(2) + cityH
+  const textTop = rightCenter - textStackH / 2
 
-  doc.font("Inter-Bold").fontSize(nameFontSize)
-  const nameH = doc.heightOfString(nameText, { width: textW, lineGap: 1.5 })
-
-  doc.font("Inter-Bold").fontSize(roleFontSize)
-  const roleH = doc.heightOfString(roleText, { width: textW, lineGap: 1 })
-
-  doc.font("Inter-Bold").fontSize(cityFontSize)
-  const cityH = doc.heightOfString(cityText, { width: textW, lineGap: 1 })
-
-  const gap1 = mm(4)
-  const gap2 = mm(2)
-  const textStackH = nameH + gap1 + roleH + gap2 + cityH
-
-  // Boundaries clamping
-  const topLimit = mm(18)
-  const bottomLimit = H - mm(14)
-  let textTop = rightCenter - textStackH / 2
-
-  if (textTop < topLimit) textTop = topLimit
-  if (textTop + textStackH > bottomLimit) {
-    textTop = Math.max(topLimit, bottomLimit - textStackH)
-  }
-
-  // QR Stack
+  // QR stack (QR 30mm + 2mm gap + 6mm reg-id bar), centered too
   const qrSize = mm(30)
   const qrX = W - padX - qrSize
   const qrStackH = qrSize + mm(2) + mm(6)
-  let qrY = rightCenter - qrStackH / 2
-  if (qrY < topLimit) qrY = topLimit
+  const qrY = rightCenter - qrStackH / 2
 
-  // Render Name
-  doc.font("Inter-Bold").fontSize(nameFontSize).fillColor(DARK_TEXT)
-  doc.text(nameText, rightX + padX, textTop, {
+  // attendee name (may wrap)
+  doc.font("Inter-Bold").fontSize(18).fillColor(DARK_TEXT)
+  doc.text(reg.name.toUpperCase(), rightX + padX, textTop, {
     width: textW,
-    lineGap: 1.5,
-    height: nameH + mm(1),
-    ellipsis: true,
+    lineGap: 1.8,
   })
 
-  // Render QR
+  // QR on right side
   if (qrBuffers.verify) {
     doc.image(qrBuffers.verify, qrX, qrY, { width: qrSize, height: qrSize })
   } else {
     doc.rect(qrX, qrY, qrSize, qrSize).fill(SLATE_100)
   }
-
-  // Render Reg ID under QR
+  // reg-id label under QR
   doc.font("Courier-Bold").fontSize(7).fillColor(NAVY_800)
   doc.save()
   doc.rect(qrX - mm(2), qrY + qrSize + mm(2), qrSize + mm(4), mm(6)).fill(SLATE_100)
   doc.restore()
-  doc.text(reg.regId, qrX - mm(2), qrY + qrSize + mm(3), {
-    width: qrSize + mm(4),
-    align: "center",
-    height: mm(5),
-    ellipsis: true,
-  })
+  doc.text(reg.regId, qrX - mm(2), qrY + qrSize + mm(2), { width: qrSize + mm(4), align: "center" })
 
-  // Render Role + City
-  const roleY = textTop + nameH + gap1
-  doc.font("Inter-Bold").fontSize(roleFontSize).fillColor(GOLD)
-  doc.text(roleText, rightX + padX, roleY, {
-    width: textW,
-    lineGap: 1,
-    height: roleH + mm(1),
-    ellipsis: true,
-  })
+  // role + city under name
+  const roleY = textTop + nameH + mm(6)
+  doc.font("Inter-Bold").fontSize(10).fillColor(GOLD)
+  doc.text(reg.occupation.toUpperCase(), rightX + padX, roleY, { width: textW, lineGap: 1 })
+  doc.font("Inter-Bold").fontSize(8).fillColor(NAVY_400)
+  doc.text("GORAKHPUR · INDIA", rightX + padX, roleY + roleH + mm(2), { width: textW, lineGap: 1 })
 
-  doc.font("Inter-Bold").fontSize(cityFontSize).fillColor(NAVY_400)
-  doc.text(cityText, rightX + padX, roleY + roleH + gap2, {
-    width: textW,
-    lineGap: 1,
-    height: cityH + mm(1),
-    ellipsis: true,
-  })
-
-  // ─── Category Footer (Single-line Scaling) ───
+  // ─── Category footer ───
   const footerY = H - mm(12)
   doc.rect(rightX, footerY, W - rightX, mm(12)).fill(NAVY_900)
   doc.save()
@@ -307,21 +217,11 @@ function drawFront(
   doc.strokeColor(GOLD)
   doc.moveTo(rightX, footerY).lineTo(W, footerY).stroke()
   doc.restore()
-
-  const footerW = W - rightX - mm(6)
-  const { fontSize: footerFontSize, characterSpacing: footerSpacing } = getFooterFontConfig(
-    doc,
-    roleText,
-    footerW
-  )
-
-  doc.font("Inter-Bold").fontSize(footerFontSize).fillColor(GOLD_LIGHT)
-  doc.text(roleText, rightX + mm(3), footerY + mm(3.5), {
-    width: footerW,
+  doc.font("Inter-Bold").fontSize(11).fillColor(GOLD_LIGHT)
+  doc.text(reg.occupation.toUpperCase(), rightX, footerY + mm(3.5), {
+    width: W - rightX,
     align: "center",
-    characterSpacing: footerSpacing,
-    height: mm(7),
-    ellipsis: true,
+    characterSpacing: 3, // preview uses letter-spacing 4px
   })
 }
 
@@ -330,8 +230,10 @@ function drawBack(
   reg: IdCardRegistration,
   qrBuffers: { event: Buffer | null; feedback: Buffer | null }
 ) {
+  // 1. White background
   doc.rect(0, 0, W, H).fill(WHITE)
 
+  // 2. Lanyard bar (top 16mm)
   const barGrad = linearGradient(doc, 0, 0, W, mm(16), [
     [0, GOLD],
     [0.5, GOLD_LIGHT],
@@ -345,6 +247,7 @@ function drawBack(
   doc.roundedRect(mm(96), mm(6), mm(10), mm(4), mm(2)).fillAndStroke(WHITE, "#cbd5e1")
   doc.restore()
 
+  // 3. Bottom footer (bottom 12mm)
   const footerY = H - mm(12)
   doc.rect(0, footerY, W, mm(12)).fill(NAVY_900)
   doc.save()
@@ -352,16 +255,14 @@ function drawBack(
   doc.strokeColor(GOLD)
   doc.moveTo(0, footerY).lineTo(W, footerY).stroke()
   doc.restore()
-
   doc.font("Inter-Bold").fontSize(11).fillColor(GOLD_LIGHT)
   doc.text("SEE YOU NEXT EDITION: 2027", 0, footerY + mm(3.5), {
     width: W,
     align: "center",
     characterSpacing: 3,
-    height: mm(7),
-    ellipsis: true,
   })
 
+  // 4. Middle Content (between 16mm and H-12mm)
   const midTop = mm(16)
   const colW = mm(34)
   const rulesX = colW
@@ -381,7 +282,7 @@ function drawBack(
   doc.roundedRect(mm(4), qrY, qrL, qrL, mm(1.5)).stroke()
   doc.restore()
   doc.font("Inter-Bold").fontSize(8).fillColor(DARK_TEXT)
-  doc.text("EVENT\nINFO", mm(4), qrY + qrL + mm(4), { width: qrL, align: "center", lineGap: 2.4, height: mm(10), ellipsis: true })
+  doc.text("EVENT\nINFO", mm(4), qrY + qrL + mm(4), { width: qrL, align: "center", lineGap: 2.4 })
 
   // Right QR
   const rightX = W - colW
@@ -395,7 +296,7 @@ function drawBack(
   doc.strokeColor(GOLD)
   doc.roundedRect(rightX + mm(4), qrY, qrL, qrL, mm(1.5)).stroke()
   doc.restore()
-  doc.text("FEEDBACK\nFORM", rightX + mm(4), qrY + qrL + mm(4), { width: qrL, align: "center", lineGap: 2.4, height: mm(10), ellipsis: true })
+  doc.text("FEEDBACK\nFORM", rightX + mm(4), qrY + qrL + mm(4), { width: qrL, align: "center", lineGap: 2.4 })
 
   // Dividers
   doc.save()
@@ -410,9 +311,9 @@ function drawBack(
   const pad = mm(6)
   const rulesW = rulesEnd - rulesX - pad * 2
   
-  let currentY = midTop + mm(15)
-  doc.font("Inter-Bold").fontSize(10).fillColor(DARK_TEXT)
-  doc.text("GUIDELINES", rulesX + pad, currentY, { width: rulesW, align: "center", characterSpacing: 1, height: mm(6), ellipsis: true })
+  let currentY = midTop + mm(17)
+  doc.font("Inter-Bold").fontSize(11).fillColor(DARK_TEXT)
+  doc.text("GUIDELINES", rulesX + pad, currentY, { width: rulesW, align: "center", characterSpacing: 1 })
 
   const rules = [
     "Badge is mandatory for entry & non-transferable.",
@@ -421,28 +322,19 @@ function drawBack(
     "Children below 10 years are not permitted.",
     "For assistance, contact the help desk.",
   ]
-  currentY += mm(6)
-  const maxRulesY = H - mm(14)
-
-  doc.font("Inter-Bold").fontSize(7.5).fillColor(NAVY_800)
+  currentY += mm(8)
+  doc.font("Inter-Bold").fontSize(8).fillColor(NAVY_800)
   for (const rule of rules) {
-    const ruleW = rulesW - mm(4)
-    const rHeight = doc.heightOfString(rule, { width: ruleW, lineGap: 2 })
-    
-    // Safety check so rules don't breach footer
-    if (currentY + rHeight > maxRulesY) break
-
-    doc.circle(rulesX + pad + mm(1.0), currentY + mm(2.2), mm(0.8)).fill(GOLD)
-    doc.text(rule, rulesX + pad + mm(4), currentY, {
-      width: ruleW,
-      lineGap: 2,
-      height: rHeight + mm(1),
-      ellipsis: true,
-    })
-    currentY += rHeight + mm(2)
+    doc.circle(rulesX + pad + mm(1.0), currentY + mm(2.5), mm(1.0)).fill(GOLD)
+    doc.text(rule, rulesX + pad + mm(4), currentY, { width: rulesW - mm(4), lineGap: 3.2 })
+    currentY += doc.heightOfString(rule, { width: rulesW - mm(4), lineGap: 3.2 }) + mm(2.5)
   }
 }
 
+/**
+ * Generate an A6 landscape (148mm × 105mm) ID card PDF with front + back.
+ * Returns the raw PDF bytes.
+ */
 export async function generateIdCardPdf(
   reg: IdCardRegistration,
   opts: IdCardPdfOptions
@@ -470,6 +362,7 @@ export async function generateIdCardPdf(
       doc.registerFont("Inter-Bold", path.join(process.cwd(), "public", "fonts", "Inter-Bold.ttf"))
       doc.registerFont("Inter-Regular", path.join(process.cwd(), "public", "fonts", "Inter-Regular.ttf"))
     } catch (e) {
+      // Fallback
       doc.registerFont("Inter-Bold", "Helvetica-Bold")
       doc.registerFont("Inter-Regular", "Helvetica")
     }
